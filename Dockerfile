@@ -5,6 +5,14 @@ RUN apt-get update -y \
 
 RUN ldconfig /usr/local/cuda-12.1/compat/
 
+RUN apt-get update -y && \
+     apt-get upgrade -y && \
+     apt-get install --yes --no-install-recommends sudo ca-certificates git wget curl bash libgl1 libx11-6 software-properties-common build-essential -y &&\
+     apt-get autoremove -y && \
+     apt-get clean -y && \
+     rm -rf /var/lib/apt/lists/*
+
+
 # Install Python dependencies
 COPY builder/requirements.txt /requirements.txt
 RUN --mount=type=cache,target=/root/.cache/pip \
@@ -16,9 +24,9 @@ RUN python3 -m pip install vllm==0.7.3 && \
     python3 -m pip install flashinfer -i https://flashinfer.ai/whl/cu121/torch2.3
 
 # Setup for Option 2: Building the Image with the Model included
-ARG MODEL_NAME=""
+ARG MODEL_NAME="Qwen/QwQ-32B"
 ARG TOKENIZER_NAME=""
-ARG BASE_PATH="/runpod-volume"
+ARG BASE_PATH="/runpod-volumex"
 ARG QUANTIZATION=""
 ARG MODEL_REVISION=""
 ARG TOKENIZER_REVISION=""
